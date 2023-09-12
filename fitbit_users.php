@@ -28,7 +28,7 @@ if ($arr[0] === true) {
     border-radius: 0.25rem;">
         You have successfully linked your Fitbit account to REDCap.
     </div>';
-    \REDCap::logEvent("Health Plus Steps Tracker", "Participant successfully linked Fitbit account (record ID: $target_rid)", null, null, null, $project_id);
+    \REDCap::logEvent("Cope Fitbit Tracker", "Participant successfully linked Fitbit account (record ID: $target_rid)", null, null, null, $project_id);
 } else {
     $msg = '<div style="color: #856404;
     background-color: #fff3cd;
@@ -40,7 +40,7 @@ if ($arr[0] === true) {
     border-radius: 0.25rem;">
         REDCap couldn\'t link your Fitbit account. Please try again or contact a Health Plus administrator.
     </div>';
-    \REDCap::logEvent("Health Plus Steps Tracker", "Failed to link Fitbit account for record ID: $target_rid. \nErrors: " . $arr[1], null, null, null, $project_id);
+    \REDCap::logEvent("Cope Fitbit Tracker", "Failed to link Fitbit account for record ID: $target_rid. \nErrors: " . $arr[1], null, null, null, $project_id);
 }
 echo $msg;
 ?>

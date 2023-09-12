@@ -1,4 +1,4 @@
-# health-plus-steps-tracker
+# cope-fitbit-tracker
 
 To add a new project to the steps tracker, navigate here: https://dev.fitbit.com/apps (need credentials to the account that owns the app)
 

@@ -24,7 +24,7 @@ class Fitbit
     }
 
     private function fetch($project_id) {
-        $q = $this->module->query("SELECT value FROM redcap_data WHERE project_id=? AND field_name=? AND record=?",[$project_id,'fitbit_steps_auth',$this->rid]);
+        $q = $this->module->query("SELECT value FROM redcap_data WHERE project_id=? AND field_name=? AND record=?",[$project_id,'cope_fitbit_auth',$this->rid]);
         $row = $q->fetch_assoc();
         if (!empty($row['value'])) {
             $data = json_decode($row['value']);
@@ -202,16 +202,93 @@ class Fitbit
     }
 
     function get_activity($datetime) {
-        // create cURL handle
+        //create cURL handle
+        $mh = curl_multi_init();
+
+        $data_arr = array();
+        $user_id = $this->user_id;
+
+        $urls = array(
+            'activities-calories' => "https://api.fitbit.com/1/user/$user_id/activities/calories/date/$datetime/1d.json",
+            'activities-steps' => "https://api.fitbit.com/1/user/$user_id/activities/steps/date/$datetime/1d.json",
+            'activities-floors' => "https://api.fitbit.com/1/user/$user_id/activities/floors/date/$datetime/1d.json",
+            'activities-distance' => "https://api.fitbit.com/1/user/$user_id/activities/distance/date/$datetime/1d.json",
+            'activities-minutesSedentary' => "https://api.fitbit.com/1/user/$user_id/activities/minutesSedentary/date/$datetime/1d.json",
+            'activities-minutesLightlyActive' => "https://api.fitbit.com/1/user/$user_id/activities/minutesLightlyActive/date/$datetime/1d.json",
+            'activities-minutesFairlyActive' => "https://api.fitbit.com/1/user/$user_id/activities/minutesFairlyActive/date/$datetime/1d.json",
+            'activities-minutesVeryActive' => "https://api.fitbit.com/1/user/$user_id/activities/minutesVeryActive/date/$datetime/1d.json",
+            'activities-activityCalories' => "https://api.fitbit.com/1/user/$user_id/activities/activityCalories/date/$datetime/1d.json");
+
+        $rc_variables = array(
+            'fb_cal',
+            'fb_steps',
+            'fb_floors',
+            'fb_distance',
+            'fb_activity_sed',
+            'fb_activity_light',
+            'fb_activity_fair',
+            'fb_very_time',
+            'fb_activity_cal'
+        );
+
+        foreach ($urls as $i => $url) {
+            $conn[$i] = curl_init($url);
+            curl_setopt($conn[$i], CURLOPT_URL, $url);
+            curl_setopt($conn[$i], CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($conn[$i], CURLOPT_HTTPHEADER, [
+                "Authorization: Bearer " . $access_token,
+                "Content-Type: application/x-www-form-urlencoded",
+                "Accept-Language: en_US"
+            ]);
+            curl_multi_add_handle($mh, $conn[$i]);
+        }
+
+        // Execute multiple cURL requests
+        do {
+            $status = curl_multi_exec($mh, $active);
+            if ($active) {
+                curl_multi_select($mh);
+            }
+            while (false !== ($info = curl_multi_info_read($mh))) {
+                if ($info['result'] !== CURLE_OK) {
+            // There was an error in the cURL request
+                $error_message = curl_error($info['handle']);
+            // Handle the error (e.g., log or display it)
+                echo "cURL Error: $error_message\n";
+            }
+        }
+        } while ($active && $status == CURLM_OK);
+
+        foreach ($urls as $i => $url) {
+        // Get the results of each cURL request
+        
+        $res[$i] = json_decode((curl_multi_getcontent($conn[$i])));
+        // var_dump($res[$i]-> {$i}[0]->value);
+        $key_value = array_search($i, array_keys($urls));
+        $data_arr[$rc_variables[$key_value]] = $res[$i]-> {$i}[0]->value;
+
+        // Clean up cURL resources
+        curl_multi_remove_handle($mh, $conn[$i]);
+        }
+
+        curl_multi_close($mh);
+
+        // print_r($data_arr);
+
+        return $data_arr;
+    }
+
+    function get_sleep($datetime) {
+        //create cURL handle
         $ch = curl_init();
         $user_id = $this->user_id;
-        $url = "https://api.fitbit.com/1/user/$user_id/activities/steps/date/$datetime/1d.json";
+        $url = "https://api.fitbit.com/1/user/$user_id/sleep/date/$datetime.json";
 
         // set curl options to get fairly active minutes
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . $this->access_token,
+            "Authorization: Bearer " . $access_token,
             "Content-Type: application/x-www-form-urlencoded",
             "Accept-Language: en_US"
         ]);
@@ -222,12 +299,38 @@ class Fitbit
         // close and decode results
         curl_close($ch);
 
-        $output = json_decode($output);
 
-        // get number of steps
-        $steps = $output->{'activities-steps'}{0}->value;
+        $json_output = json_decode($output,true);
+        $data_arr_length = count($json_output['sleep']);
 
-        return array(true, $steps);
+        if($data_arr_length > 0) {
+
+        $fb_sleep_start = $json_output['sleep'][0]['startTime'];
+        $fb_sleep_end = $json_output['sleep'][0]['endTime'];
+        $fb_min_sleep = $json_output['sleep'][0]['minutesAsleep'];
+        $fb_min_awake = $json_output['sleep'][0]['minutesAwake'];
+        $fb_awake_ct = $json_output['sleep'][0]['awakeningsCount'];
+        $fb_tib = $json_output['sleep'][0]['timeInBed'];
+        $fb_sleep_rem = $json_output['summary']['stages']['rem'];
+        $fb_sleep_light = $json_output['summary']['stages']['light'];
+        $fb_sleep_deep = $json_output['summary']['stages']['deep'];
+
+        $data_arr['fb_sleep_start'] = $fb_sleep_start;
+        $data_arr['fb_sleep_end'] = $fb_sleep_end;
+        $data_arr['fb_min_sleep'] = $fb_min_sleep;
+        $data_arr['fb_min_awake'] = $fb_min_awake;
+        $data_arr['fb_awake_ct'] = $fb_awake_ct;
+        $data_arr['fb_tib'] = $fb_tib;
+        $data_arr['fb_sleep_rem'] = $fb_sleep_rem;
+        $data_arr['fb_sleep_light'] = $fb_sleep_light;
+        $data_arr['fb_sleep_deep'] = $fb_sleep_deep;
+
+
+        // print_r($data_arr);        
+        } else {
+            // echo "No Sleep data for this date";
+            return "No Sleep data for this date";
+        }
     }
 }
 ?>

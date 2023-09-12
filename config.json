@@ -2,12 +2,17 @@
   "name": "Health Plus Steps Tracker",
   "namespace": "Vanderbilt\\HealthPlusStepsTrackerExternalModule",
   "framework-version": 6,
-  "description": "REDCap external module to keep track of Fitbit Steps Data.",
+  "description": "REDCap external module to keep track of CoPE Fitbit Data.",
   "documentation": "README.md",
   "authors": [
     {
       "name": "Eva Bascompte Moragas",
       "email": "datacore@vumc.org",
+      "institution": "Vanderbilt University Medical Center"
+    },
+    {
+      "name": "Austin Williams",
+      "email": "austin.williams@vumc.org",
       "institution": "Vanderbilt University Medical Center"
     }
   ],
@@ -17,21 +22,28 @@
   "project-settings": [
     {
       "key": "start_date",
-      "name": "Start date of the challenge",
+      "name": "Start date",
       "type": "date"
     },
     {
       "key": "end_date",
-      "name": "End date of the challenge",
+      "name": "End date",
       "type": "date"
     }
   ],
   "system-settings": [],
   "crons": [
     {
-      "cron_name": "update_steps",
-      "cron_description": "Cron that runs every night at 23:55h to update the steps information",
-      "method": "update_steps",
+      "cron_name": "update_activity",
+      "cron_description": "Cron that runs every night at 23:55h to update the activity information",
+      "method": "update_activity",
+      "cron_frequency": "43200",
+      "cron_max_run_time": "600"
+    },
+    {
+      "cron_name": "update_sleep",
+      "cron_description": "Cron that runs every night at 23:55h to update the sleep information",
+      "method": "update_sleep",
       "cron_frequency": "43200",
       "cron_max_run_time": "600"
     }
