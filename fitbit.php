@@ -161,10 +161,10 @@ class Fitbit
     }
 
     private function get_credentials($module) {
-        if (file_exists("/Applications/XAMPP/htdocs/modules/health-plus-steps-tracker_v1.0.0/health_plus_steps_tracker_fitbit.txt")) {
-            $filename = "/Applications/XAMPP/htdocs/modules/health-plus-steps-tracker_v1.0.0/health_plus_steps_tracker_fitbit.txt";
+        if (file_exists("/Applications/XAMPP/htdocs/modules/cope-fitbit-tracker_v1.0.0/cope_fitbit_tracker.txt")) {
+            $filename = "/Applications/XAMPP/htdocs/modules/cope-fitbit-tracker_v1.0.0/cope_fitbit_tracker.txt";
         }else{
-            $filename = "/app001/credentials/health_plus_steps_tracker_fitbit.txt";
+            $filename = "/app001/credentials/cope_fitbit_tracker.txt";
         }
         $credentials = json_decode(file_get_contents($filename));
         $credentials->redirect_uri = $module->getUrl("fitbit_users.php?page=fitbit_users&NOAUTH");
@@ -182,11 +182,11 @@ class Fitbit
         $Proj = new \Project($project_id);
         $event_id = $Proj->firstEventId;
 
-        $q = $this->module->query("SELECT value FROM redcap_data WHERE project_id=? AND field_name=? AND record=?",[$project_id,'fitbit_steps_auth',$rid]);
+        $q = $this->module->query("SELECT value FROM redcap_data WHERE project_id=? AND field_name=? AND record=?",[$project_id,'cope_fitbit_auth',$rid]);
         if (empty($q->fetch_assoc())) {
-            $q = $this->module->query("INSERT INTO redcap_data (project_id, record, event_id, field_name, value) VALUES (?,?,?,?,?)",[$project_id,$rid,$event_id,'fitbit_steps_auth',$value]);
+            $q = $this->module->query("INSERT INTO redcap_data (project_id, record, event_id, field_name, value) VALUES (?,?,?,?,?)",[$project_id,$rid,$event_id,'cope_fitbit_auth',$value]);
         }else{
-            $q = $this->module->query("UPDATE redcap_data SET value = ? WHERE project_id=? and field_name=? and record=?",[$value,$project_id,'fitbit_steps_auth',$rid]);
+            $q = $this->module->query("UPDATE redcap_data SET value = ? WHERE project_id=? and field_name=? and record=?",[$value,$project_id,'cope_fitbit_auth',$rid]);
         }
 
         return array(true);

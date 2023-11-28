@@ -1,6 +1,6 @@
 {
-  "name": "Health Plus Steps Tracker",
-  "namespace": "Vanderbilt\\HealthPlusStepsTrackerExternalModule",
+  "name": "Cope Fitbit Tracker",
+  "namespace": "Vanderbilt\\CopeFitbitTrackerExternalModule",
   "framework-version": 6,
   "description": "REDCap external module to keep track of CoPE Fitbit Data.",
   "documentation": "README.md",
