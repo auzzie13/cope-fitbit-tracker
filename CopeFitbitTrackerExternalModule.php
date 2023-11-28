@@ -81,7 +81,7 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
 			## Set default value for $datai to prevent PHP8 errors
 			$datai = $datai ?: [];
             foreach ($datai as $instance => $instance_data){
-                if($instance_data['date_fitbit'] == $date){
+                if($instance_data['fb_date'] == $date){
                     $instanceId = $instance;
                     $instance_found = true;
                     break;
@@ -94,7 +94,7 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
 
         $array_repeat_instances = array();
         $aux = array();
-        $aux['date_fitbit'] = $date;
+        $aux['fb_date'] = $date;
         if($activity[1] != null && $activity[1] != "") {
             $aux['activity_1'] = $activity;
         }else{
@@ -155,7 +155,7 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
 			## Set default value for $datai to prevent PHP8 errors
 			$datai = $datai ?: [];
             foreach ($datai as $instance => $instance_data){
-                if($instance_data['date_fitbit'] == $date){
+                if($instance_data['fb_date_sleep'] == $date){
                     $instanceId = $instance;
                     $instance_found = true;
                     break;
@@ -168,7 +168,7 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
 
         $array_repeat_instances = array();
         $aux = array();
-        $aux['date_fitbit'] = $date;
+        $aux['fb_date_sleep'] = $date;
         if($sleep[1] != null && $sleep[1] != "") {
             $aux['sleep_1'] = $sleep;
         }else{
