@@ -51,7 +51,8 @@ class Fitbit
         // client_id
         $fitbit_auth_url .= "&client_id=" . rawurlencode($fitbit_api->client_id);
         // scope
-        $fitbit_auth_url .= "&scope=" . rawurlencode("activity");
+        $fitbit_auth_url .= "&scope=" . rawurlencode("activity%20cardio_fitness%20electrocardiogram%20heartrate%20location%20oxygen_saturation%20profile%20respiratory_rate%20settings%20sleep%20social%20temperature%20weight
+        ");
         // redirect_uri
         $fitbit_auth_url .= "&redirect_uri=" . rawurlencode($fitbit_api->redirect_uri);
         // state
