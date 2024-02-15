@@ -4,5 +4,5 @@ if(!\ExternalModules\ExternalModules::isSuperUser()) {
 	die();
 }
 echo "test";
-$module->update_steps([]);
+$module->update_activity([]);
 
