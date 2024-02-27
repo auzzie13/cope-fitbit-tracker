@@ -301,9 +301,12 @@ class Fitbit
 
 
         $json_output = json_decode($output,true);
-        $data_arr_length = count($json_output['sleep']);
+        // $data_arr_length = count($json_output['sleep']);
 
-        if($data_arr_length > 0) {
+        if(($json_output['sleep'] ? count($json_output['sleep']) : 0)  ) {
+
+
+        // if($data_arr_length > 0) {
 
         $fb_sleep_start = $json_output['sleep'][0]['startTime'];
         $fb_sleep_end = $json_output['sleep'][0]['endTime'];
@@ -329,7 +332,7 @@ class Fitbit
         // print_r($data_arr);        
         } else {
             // echo "No Sleep data for this date";
-            return "No Sleep data for this date";
+            return;
         }
     }
 }
