@@ -236,7 +236,7 @@ class Fitbit
             curl_setopt($conn[$i], CURLOPT_URL, $url);
             curl_setopt($conn[$i], CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($conn[$i], CURLOPT_HTTPHEADER, [
-                "Authorization: Bearer " . $access_token,
+                "Authorization: Bearer " . $this->access_token,
                 "Content-Type: application/x-www-form-urlencoded",
                 "Accept-Language: en_US"
             ]);
@@ -261,7 +261,7 @@ class Fitbit
 
         foreach ($urls as $i => $url) {
         // Get the results of each cURL request
-        
+
         $res[$i] = json_decode((curl_multi_getcontent($conn[$i])));
         // var_dump($res[$i]-> {$i}[0]->value);
         $key_value = array_search($i, array_keys($urls));
@@ -275,7 +275,7 @@ class Fitbit
 
         // print_r($data_arr);
 
-        return $data_arr;
+        return [true, $data_arr];
     }
 
     function get_sleep($datetime) {
@@ -288,7 +288,7 @@ class Fitbit
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . $access_token,
+            "Authorization: Bearer " . $this->access_token,
             "Content-Type: application/x-www-form-urlencoded",
             "Accept-Language: en_US"
         ]);
@@ -301,9 +301,12 @@ class Fitbit
 
 
         $json_output = json_decode($output,true);
-        $data_arr_length = count($json_output['sleep']);
+        // $data_arr_length = count($json_output['sleep']);
 
-        if($data_arr_length > 0) {
+        if(($json_output['sleep'] ? count($json_output['sleep']) : 0)  ) {
+
+
+        // if($data_arr_length > 0) {
 
         $fb_sleep_start = $json_output['sleep'][0]['startTime'];
         $fb_sleep_end = $json_output['sleep'][0]['endTime'];
@@ -325,11 +328,11 @@ class Fitbit
         $data_arr['fb_sleep_light'] = $fb_sleep_light;
         $data_arr['fb_sleep_deep'] = $fb_sleep_deep;
 
-
+        return [true, $data_arr];
         // print_r($data_arr);        
         } else {
             // echo "No Sleep data for this date";
-            return "No Sleep data for this date";
+            return;
         }
     }
 }
