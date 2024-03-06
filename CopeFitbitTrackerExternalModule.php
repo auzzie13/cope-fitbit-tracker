@@ -93,14 +93,8 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
         }
 
         $array_repeat_instances = array();
-        $aux = array();
-        $aux['fb_date'] = $date;
-        if($activity[1] != null && $activity[1] != "") {
-            $aux['activity_1'] = $activity;
-        }else{
-            $aux['activity_1'] = 0;
-        }
-        $array_repeat_instances[$rid]['repeat_instances'][$event_id]['fitbit_activity_data'][$instanceId] = $aux;
+        $activity['fb_date'] = $date;
+        $array_repeat_instances[$rid]['repeat_instances'][$event_id]['fitbit_activity_data'][$instanceId] = $activity;
         $results = \REDCap::saveData($project_id, 'array', $array_repeat_instances,'overwrite', 'YMD', 'flat', '', true, true, true, false, true, array(), true, false, 1, false, '');
     }
 
