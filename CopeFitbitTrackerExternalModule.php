@@ -161,14 +161,8 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
         }
 
         $array_repeat_instances = array();
-        $aux = array();
-        $aux['fb_date_sleep'] = $date;
-        if($sleep[1] != null && $sleep[1] != "") {
-            $aux['sleep_1'] = $sleep;
-        }else{
-            $aux['sleep_1'] = 0;
-        }
-        $array_repeat_instances[$rid]['repeat_instances'][$event_id]['fitbit_sleep_data'][$instanceId] = $aux;
+		$sleep['fb_date_sleep'] = $date;
+        $array_repeat_instances[$rid]['repeat_instances'][$event_id]['fitbit_sleep_data'][$instanceId] = $sleep;
         $results = \REDCap::saveData($project_id, 'array', $array_repeat_instances,'overwrite', 'YMD', 'flat', '', true, true, true, false, true, array(), true, false, 1, false, '');
     }
 }
