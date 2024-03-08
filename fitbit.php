@@ -282,7 +282,7 @@ class Fitbit
         //create cURL handle
         $ch = curl_init();
         $user_id = $this->user_id;
-        $url = "https://api.fitbit.com/1/user/$user_id/sleep/date/$datetime.json";
+        $url = "https://api.fitbit.com/1.2/user/$user_id/sleep/date/$datetime.json";
 
         // set curl options to get fairly active minutes
         curl_setopt($ch, CURLOPT_URL, $url);
