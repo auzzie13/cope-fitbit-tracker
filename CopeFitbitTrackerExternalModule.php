@@ -19,7 +19,7 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
         $q = $this->query("SELECT value FROM redcap_data WHERE project_id=? AND field_name=? AND record=?",[$project_id,'options',$record]);
         $row = $q->fetch_assoc();
 		if ($instrument == 'registration' && $row['value'] == '3') {
-            $fitbit = new \Fitbit($record,$this,$project_id);
+            $fitbit = new Fitbit($record,$this,$project_id);
             if (!$fitbit->auth_timestamp) {
                 $hyperlink = $fitbit->make_auth_link($this);
 
@@ -43,7 +43,7 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
                 foreach ($record_ids as $record) {
 					$current_date = $start_date;
                     $rid = $record->record_id;
-                    $fitbit_obj = new \Fitbit($rid, $this, $project_id);
+                    $fitbit_obj = new Fitbit($rid, $this, $project_id);
 					if($fitbit_obj && $fitbit_obj->access_token) {
 						#If the today is in the date range OR we need to check after +7 days for updates
 						if ((strtotime($today) >= strtotime($start_date) && strtotime($today) <= strtotime($end_date)) || (strtotime($today) <= strtotime($end_date_seven_days_date))) {
@@ -111,7 +111,7 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
                 foreach ($record_ids as $record) {
 					$current_date = $start_date;
                     $rid = $record->record_id;
-                    $fitbit_obj = new \Fitbit($rid, $this, $project_id);
+                    $fitbit_obj = new Fitbit($rid, $this, $project_id);
 					if($fitbit_obj && $fitbit_obj->access_token) {
 						#If the today is in the date range OR we need to check after +7 days for updates
 						if ((strtotime($today) >= strtotime($start_date) && strtotime($today) <= strtotime($end_date)) || (strtotime($today) <= strtotime($end_date_seven_days_date))) {
