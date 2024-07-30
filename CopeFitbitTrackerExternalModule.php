@@ -40,6 +40,7 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
 
             if($start_date != "" && $end_date != "") {
                 $record_ids = json_decode(\REDCap::getData($project_id, 'json', null, 'record_id'));
+				error_log("COPE FITBIT ".json_encode($record_ids));
                 foreach ($record_ids as $record) {
 					$current_date = $start_date;
                     $rid = $record->record_id;
@@ -53,6 +54,9 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
 								if ($today <= $seven_days_date) {
 									$activity = $fitbit_obj->get_activity($current_date);
 									if($activity[0] && $activity[1]) {
+										if($record == "VCP-139") {
+											error_log("COPE FITBIT SAVE: ".json_encode($activity));
+										}
 										$this->save_activity($project_id, $rid, $current_date, $activity[1]);
 									}
 								}
