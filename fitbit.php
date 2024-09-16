@@ -1,5 +1,7 @@
 <?php
 
+namespace Vanderbilt\CopeFitbitTrackerExternalModule;
+
 class Fitbit
 {
     function __construct($rid,$module,$project_id)

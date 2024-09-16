@@ -14,7 +14,7 @@ foreach($record_ids as $record) {
     }
 }
 
-$fitbit = new \Fitbit($target_rid,$module,$project_id);
+$fitbit = new \Vanderbilt\CopeFitbitTrackerExternalModule\Fitbit($target_rid,$module,$project_id);
 $arr = $fitbit->link_account($project_id);
 
 if ($arr[0] === true) {

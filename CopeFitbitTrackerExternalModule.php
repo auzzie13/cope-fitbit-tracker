@@ -19,7 +19,7 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
         $q = $this->query("SELECT value FROM redcap_data WHERE project_id=? AND field_name=? AND record=?",[$project_id,'options',$record]);
         $row = $q->fetch_assoc();
 		if ($instrument == 'registration' && $row['value'] == '3') {
-            $fitbit = new \Fitbit($record,$this,$project_id);
+            $fitbit = new Fitbit($record,$this,$project_id);
             if (!$fitbit->auth_timestamp) {
                 $hyperlink = $fitbit->make_auth_link($this);
 
@@ -40,10 +40,11 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
 
             if($start_date != "" && $end_date != "") {
                 $record_ids = json_decode(\REDCap::getData($project_id, 'json', null, 'record_id'));
+				error_log("COPE FITBIT ".json_encode($record_ids));
                 foreach ($record_ids as $record) {
 					$current_date = $start_date;
                     $rid = $record->record_id;
-                    $fitbit_obj = new \Fitbit($rid, $this, $project_id);
+                    $fitbit_obj = new Fitbit($rid, $this, $project_id);
 					if($fitbit_obj && $fitbit_obj->access_token) {
 						#If the today is in the date range OR we need to check after +7 days for updates
 						if ((strtotime($today) >= strtotime($start_date) && strtotime($today) <= strtotime($end_date)) || (strtotime($today) <= strtotime($end_date_seven_days_date))) {
@@ -53,6 +54,9 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
 								if ($today <= $seven_days_date) {
 									$activity = $fitbit_obj->get_activity($current_date);
 									if($activity[0] && $activity[1]) {
+										if($record == "VCP-139") {
+											error_log("COPE FITBIT SAVE: ".json_encode($activity));
+										}
 										$this->save_activity($project_id, $rid, $current_date, $activity[1]);
 									}
 								}
@@ -111,7 +115,7 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
                 foreach ($record_ids as $record) {
 					$current_date = $start_date;
                     $rid = $record->record_id;
-                    $fitbit_obj = new \Fitbit($rid, $this, $project_id);
+                    $fitbit_obj = new Fitbit($rid, $this, $project_id);
 					if($fitbit_obj && $fitbit_obj->access_token) {
 						#If the today is in the date range OR we need to check after +7 days for updates
 						if ((strtotime($today) >= strtotime($start_date) && strtotime($today) <= strtotime($end_date)) || (strtotime($today) <= strtotime($end_date_seven_days_date))) {
@@ -161,14 +165,8 @@ class CopeFitbitTrackerExternalModule extends AbstractExternalModule
         }
 
         $array_repeat_instances = array();
-        $aux = array();
-        $aux['fb_date_sleep'] = $date;
-        if($sleep[1] != null && $sleep[1] != "") {
-            $aux['sleep_1'] = $sleep;
-        }else{
-            $aux['sleep_1'] = 0;
-        }
-        $array_repeat_instances[$rid]['repeat_instances'][$event_id]['fitbit_sleep_data'][$instanceId] = $aux;
+		$sleep['fb_date_sleep'] = $date;
+        $array_repeat_instances[$rid]['repeat_instances'][$event_id]['fitbit_sleep_data'][$instanceId] = $sleep;
         $results = \REDCap::saveData($project_id, 'array', $array_repeat_instances,'overwrite', 'YMD', 'flat', '', true, true, true, false, true, array(), true, false, 1, false, '');
     }
 }
